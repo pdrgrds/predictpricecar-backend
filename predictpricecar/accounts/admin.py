@@ -4,8 +4,13 @@ from .models import CustomUser, UserType, Module
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('phone', 'user_type')}),
+    add_fieldsets = (
+        (
+            None, {
+                'classes': ('wide',),
+                'fields': ('username', 'email', 'phone', 'user_type', 'password1', 'password2'),
+            },
+        ),
     )
 
 @admin.register(UserType)
