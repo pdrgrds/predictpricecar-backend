@@ -12,11 +12,15 @@
 # class CustomLoginView(LoginView):
 #     template_name = 'registration/login.html'
 
+from decouple import config
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.core.mail import send_mail
+from .utils import generate_random_password
+from .models import CustomUser
 
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
@@ -41,4 +45,28 @@ class UserDetailView(generics.RetrieveAPIView):
     def get_object(self):
         return self.request.user
 
+class ForgotPasswordView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        if not email:
+            return Response({'error': 'El correo es requerido'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return Response({'message': 'Se envio una nueva contraseña a tu correo.'}, status=status.HTTP_200_OK)
+
+        new_password = generate_random_password()
+        user.set_password(new_password)
+        user.save()
+
+        send_mail(
+            'Nueva contraseña',
+            f'Hola {user.username},\n\nTu nueva contraseña es: {new_password}\n\nPor favor, cambiala luego de iniciar sesión.',
+            config('EMAIL_HOST_USER'),
+            [user.email],
+            fail_silently=False,
+        )
+
+        return Response({'message': 'Se envio una nueva contraseña a tu correo.'}, status=status.HTTP_200_OK)
 
