@@ -1,14 +1,17 @@
-### Generar certificado (Mac OS)
+poetry run django-admin startproject config src/
 
-```
-/Applications/Python\ 3.8/Install\ Certificates.command  
-```
+poetry run python src/manage.py startapp api
+mv api src
+poetry run python src/manage.py startapp accounts
+mv accounts src/
 
-### Environments
+poetry run python src/manage.py makemigrations accounts
+poetry run python src/manage.py migrate
 
-Crear archivo .env en la raiz
+poetry run python src/manage.py createsuperuser\n
+poetry run python src/manage.py runserver\n
 
-```
-EMAIL_HOST_USER=<email>
-EMAIL_HOST_PASSWORD=<passowrd>
-```
+# Run docker
+
+docker build -t predictcar .
+docker run -d -p 8000:8000 predictcar
