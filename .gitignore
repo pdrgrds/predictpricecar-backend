@@ -1,1 +1,44 @@
-/env
+# Entorno virtual
+env/
+venv/
+ENV/
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*.so
+*.pyo
+
+# Archivos de configuración
+*.env
+*.local
+*.DS_Store
+*.sqlite3
+
+# Configuración de macOS
+.DS_Store
+
+# Django media y static
+/media/
+staticfiles/
+media/
+
+# Archivos de modelo
+# *.pkl
+# modelo/
+
+# Archivos de migraciones
+**/migrations/
+!*/migrations/__init__.py
+
+# Configuración de IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+
+# AWS credentials (si los tuvieras en el repo)
+.aws/
