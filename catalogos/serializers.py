@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import (
     MarcaVehiculo,
+    ModeloVehiculo,
+    VersionVehiculo,
     TipoCombustible,
     TipoTransmision,
     TipoTraccion,
@@ -10,6 +12,20 @@ from .models import (
 class MarcaVehiculoSerializer(serializers.ModelSerializer):
     class Meta:
         model = MarcaVehiculo
+        fields = '__all__'
+
+class ModeloVehiculoSerializer(serializers.ModelSerializer):
+    marca = MarcaVehiculoSerializer()
+
+    class Meta:
+        model = ModeloVehiculo
+        fields = '__all__'
+
+class VersionVehiculoSerializer(serializers.ModelSerializer):
+    modelo = ModeloVehiculoSerializer()
+
+    class Meta:
+        model = VersionVehiculo
         fields = '__all__'
 
 class TipoCombustibleSerializer(serializers.ModelSerializer):

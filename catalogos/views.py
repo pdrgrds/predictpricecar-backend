@@ -4,19 +4,31 @@ from .models import (
     TipoCombustible,
     TipoTransmision,
     TipoTraccion,
-    CondicionVehiculo
+    CondicionVehiculo,
+    ModeloVehiculo,
+    VersionVehiculo,
 )
 from .serializers import (
     MarcaVehiculoSerializer,
     TipoCombustibleSerializer,
     TipoTransmisionSerializer,
     TipoTraccionSerializer,
-    CondicionVehiculoSerializer
+    CondicionVehiculoSerializer,
+    ModeloVehiculoSerializer,
+    VersionVehiculoSerializer,
 )
 
 class MarcaVehiculoViewSet(viewsets.ModelViewSet):
     queryset = MarcaVehiculo.objects.all()
     serializer_class = MarcaVehiculoSerializer
+
+class ModeloVehiculoViewSet(viewsets.ModelViewSet):
+    queryset = ModeloVehiculo.objects.all()
+    serializer_class = ModeloVehiculoSerializer
+
+class VersionVehiculoViewSet(viewsets.ModelViewSet):
+    queryset = VersionVehiculo.objects.all()
+    serializer_class = VersionVehiculoSerializer
 
 class TipoCombustibleViewSet(viewsets.ModelViewSet):
     queryset = TipoCombustible.objects.all()
