@@ -1,18 +1,19 @@
 from django.db import models
 from catalogos.models import (
     MarcaVehiculo,
+    ModeloVehiculo,
+    VersionVehiculo,
     TipoCombustible,
     TipoTransmision,
     TipoTraccion,
-    CondicionVehiculo
+    CondicionVehiculo,
+    ColorVehiculo,
+    TipoVehiculo
 )
 from django.contrib.auth.models import User
 
 class PrediccionVehiculo(models.Model):
     year_of_manufacture = models.PositiveIntegerField()
-    model = models.CharField(max_length=100)
-    version = models.CharField(max_length=100)
-    color = models.CharField(max_length=50)
     number_of_doors = models.PositiveIntegerField()
     engine_power = models.PositiveIntegerField()
     mileage = models.PositiveIntegerField()
@@ -43,9 +44,13 @@ class PrediccionVehiculo(models.Model):
 
     # Relaciones con catálogos
     brand = models.ForeignKey(MarcaVehiculo, on_delete=models.CASCADE)
+    model = models.ForeignKey(ModeloVehiculo, on_delete=models.CASCADE)
+    version = models.ForeignKey(VersionVehiculo, on_delete=models.CASCADE)
     fuel_type = models.ForeignKey(TipoCombustible, on_delete=models.CASCADE)
     transmission_type = models.ForeignKey(TipoTransmision, on_delete=models.CASCADE)
     traction_type = models.ForeignKey(TipoTraccion, on_delete=models.CASCADE)
+    color = models.ForeignKey(ColorVehiculo, on_delete=models.CASCADE)
+    vehicle_type = models.ForeignKey(TipoVehiculo, on_delete=models.CASCADE)
     
     body_condition = models.ForeignKey(CondicionVehiculo, on_delete=models.SET_NULL, null=True, related_name='body')
     chassis_condition = models.ForeignKey(CondicionVehiculo, on_delete=models.SET_NULL, null=True, related_name='chassis')

@@ -6,7 +6,9 @@ from .models import (
     TipoCombustible,
     TipoTransmision,
     TipoTraccion,
-    CondicionVehiculo
+    CondicionVehiculo,
+    ColorVehiculo,
+    TipoVehiculo,
 )
 
 class MarcaVehiculoSerializer(serializers.ModelSerializer):
@@ -46,4 +48,14 @@ class TipoTraccionSerializer(serializers.ModelSerializer):
 class CondicionVehiculoSerializer(serializers.ModelSerializer):
     class Meta:
         model = CondicionVehiculo
+        fields = '__all__'
+
+class ColorVehiculoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ColorVehiculo
+        fields = '__all__'
+
+class TipoVehiculoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipoVehiculo
         fields = '__all__'

@@ -7,6 +7,8 @@ from .models import (
     CondicionVehiculo,
     ModeloVehiculo,
     VersionVehiculo,
+    ColorVehiculo,
+    TipoVehiculo,
 )
 from .serializers import (
     MarcaVehiculoSerializer,
@@ -16,6 +18,8 @@ from .serializers import (
     CondicionVehiculoSerializer,
     ModeloVehiculoSerializer,
     VersionVehiculoSerializer,
+    ColorVehiculoSerializer,
+    TipoVehiculoSerializer,
 )
 
 class MarcaVehiculoViewSet(viewsets.ModelViewSet):
@@ -45,3 +49,11 @@ class TipoTraccionViewSet(viewsets.ModelViewSet):
 class CondicionVehiculoViewSet(viewsets.ModelViewSet):
     queryset = CondicionVehiculo.objects.all()
     serializer_class = CondicionVehiculoSerializer
+
+class ColorVehiculoViewSet(viewsets.ModelViewSet):
+    queryset = ColorVehiculo.objects.all()
+    serializer_class = ColorVehiculoSerializer
+
+class TipoVehiculoViewSet(viewsets.ModelViewSet):
+    queryset = TipoVehiculo.objects.all()
+    serializer_class = TipoVehiculoSerializer

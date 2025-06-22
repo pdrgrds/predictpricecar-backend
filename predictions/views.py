@@ -17,7 +17,8 @@ from rest_framework.parsers import MultiPartParser, FormParser
 def predecir_y_guardar(request):
     try:
         parser_classes = (MultiPartParser, FormParser)
-        data = request.data.copy()
+        data = dict(request.data)
+        data = {k: v[0] if isinstance(v, list) else v for k, v in request.data.lists()}
 
         # Convertimos los valores string a sus tipos esperados
         def convertir(valor):
@@ -34,14 +35,15 @@ def predecir_y_guardar(request):
         datos_para_modelo = {k: convertir(v) for k, v in data.items() if not hasattr(v, 'read')}
         resultado = predecir_precio(datos_para_modelo)
 
-        # Unimos resultados al request original
-        data.update({
-            'valued_amount': resultado['valued_amount'],
-            'mae': resultado['mae'],
-            'rmse': resultado['rmse'],
-            'squared': resultado['squared']
-        })
+        print(resultado)
 
+        # Unimos resultados al request original
+        data['valued_amount'] = resultado['valued_amount']
+        data['mae'] = resultado['mae']
+        data['rmse'] = resultado['rmse']
+        data['squared'] = resultado['squared']
+
+        print(data)
         # Guardar en base de datos
         serializer = PrediccionVehiculoSerializer(data=data)
         if serializer.is_valid():

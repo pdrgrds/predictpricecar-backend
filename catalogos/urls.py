@@ -10,6 +10,8 @@ router.register(r'combustibles', views.TipoCombustibleViewSet)
 router.register(r'transmisiones', views.TipoTransmisionViewSet)
 router.register(r'tracciones', views.TipoTraccionViewSet)
 router.register(r'condiciones', views.CondicionVehiculoViewSet)
+router.register(r'color', views.ColorVehiculoViewSet)
+router.register(r'tipo-vehiculo', views.TipoVehiculoViewSet, basename='tipovehiculo')
 
 urlpatterns = [
     path('', include(router.urls)),
