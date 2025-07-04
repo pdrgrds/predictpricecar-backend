@@ -10,7 +10,7 @@ from catalogos.models import (
     ColorVehiculo,
     TipoVehiculo
 )
-from django.contrib.auth.models import User
+from django.conf import settings
 
 class PrediccionVehiculo(models.Model):
     year_of_manufacture = models.PositiveIntegerField()
@@ -60,8 +60,8 @@ class PrediccionVehiculo(models.Model):
     air_conditioning_condition = models.ForeignKey(CondicionVehiculo, on_delete=models.SET_NULL, null=True, related_name='air_conditioning')
     electrical_system_condition = models.ForeignKey(CondicionVehiculo, on_delete=models.SET_NULL, null=True, related_name='electrical')
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    copied_user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='copied_predictions')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="predicciones")
+    copied_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="predicciones_copiadas")
 
     created_at = models.DateTimeField(auto_now_add=True)
 
