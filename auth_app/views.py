@@ -6,6 +6,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
 from django.contrib.auth import get_user_model
+from django.core.mail import EmailMultiAlternatives
+import random
+import string
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 class LoginAPIView(APIView):
     """
@@ -90,3 +95,45 @@ class RegisterAPIView(APIView):
             {"success": True},
             status=status.HTTP_201_CREATED
         )
+
+class ForgotPasswordAPIView(APIView):
+    """
+    Recuperar contraseña y enviar correo con la nueva
+    """
+    def post(self, request):
+        User = get_user_model()
+        email = request.data.get("email")
+        if not email:
+            return Response({"error": "Debe enviar el correo electrónico"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            # Por seguridad, no revelar que no existe
+            return Response({"message": "Si el correo existe, se enviará un enlace de recuperación."})
+
+        # Generar contraseña aleatoria
+        new_password = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        user.set_password(new_password)
+        user.save()
+
+        # Enviar correo
+        subject = "Recuperación de contraseña"
+        html_message = render_to_string("emails/password_reset_custom.html", {
+            "password": new_password,
+            "nombre": user.first_name
+        })
+        plain_message = strip_tags(html_message)
+
+        # Crear el correo
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=plain_message,
+            from_email=None,
+            to=[email]
+        )
+
+        msg.attach_alternative(html_message, "text/html")
+        msg.send()
+
+        return Response({"message": "Si el correo existe, se enviará un enlace de recuperación."}, status=status.HTTP_200_OK)

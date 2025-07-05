@@ -158,3 +158,12 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # AWS_ACCESS_KEY_ID = 'tu-access-key'
 # AWS_SECRET_ACCESS_KEY = 'tu-secret-key'
 # AWS_STORAGE_BUCKET_NAME = 'tu-bucket'
+
+# Mailjet configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'in-v3.mailjet.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = '06fdbd76bbbc058833eddcc2c533df09'          # ejemplo: '1234567890abcdef'
+EMAIL_HOST_PASSWORD = '4a98a16f33b1e00f0b83934acffac6a5'   # ejemplo: 'abcd1234efgh5678'
+DEFAULT_FROM_EMAIL = 'pdrgrds@hotmail.com'   # importante que sea autorizado en Mailjet
