@@ -11,6 +11,8 @@ import random
 import string
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from rest_framework import status, permissions
+from .serializers import UpdateProfileSerializer, ChangePasswordSerializer
 
 class LoginAPIView(APIView):
     """
@@ -50,6 +52,8 @@ class LoginAPIView(APIView):
                 "first_name": user.first_name,
                 "last_name": user.last_name,
                 "is_staff": user.is_staff,
+                "phone": user.phone,
+                "date_joined": user.date_joined
             }
         })
 
@@ -137,3 +141,59 @@ class ForgotPasswordAPIView(APIView):
         msg.send()
 
         return Response({"message": "Si el correo existe, se enviará un enlace de recuperación."}, status=status.HTTP_200_OK)
+
+class UpdateProfileAPIView(APIView):
+    """
+    Permite actualizar los datos del usuario autenticado
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+
+        serializer = UpdateProfileSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {
+                    "success": True,
+                    "message": "Datos actualizados correctamente.",
+                    "data": serializer.data
+                }
+            )
+        return Response(
+            {"success": False, "errors": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+class ChangePasswordAPIView(APIView):
+    """
+    Permite al usuario autenticado cambiar su contraseña
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+        serializer = ChangePasswordSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                {"success": False, "errors": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        current_password = serializer.validated_data["currentPassword"]
+        new_password = serializer.validated_data["newPassword"]
+
+        if not user.check_password(current_password):
+            return Response(
+                {"success": False, "error": "La contraseña actual no es correcta."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.set_password(new_password)
+        user.save()
+
+        return Response(
+            {"success": True, "message": "Contraseña actualizada correctamente."},
+            status=status.HTTP_200_OK
+        )

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'auth_app',
     'corsheaders',
     'rest_framework_simplejwt',
+    'blog',
 ]
 
 REST_FRAMEWORK = {
@@ -167,3 +169,10 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = '06fdbd76bbbc058833eddcc2c533df09'          # ejemplo: '1234567890abcdef'
 EMAIL_HOST_PASSWORD = '4a98a16f33b1e00f0b83934acffac6a5'   # ejemplo: 'abcd1234efgh5678'
 DEFAULT_FROM_EMAIL = 'pdrgrds@hotmail.com'   # importante que sea autorizado en Mailjet
+
+# Configuración de Token
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=2),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+}
