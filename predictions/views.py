@@ -9,6 +9,15 @@ from .predictor import predecir_precio
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from blog.models import BlogPost
+from django.db.models import Q
+from catalogos.models import (
+    MarcaVehiculo,
+    ColorVehiculo,
+    TipoCombustible,
+    TipoTransmision
+)
+from django.db import models
+
 
 class PrediccionVehiculoViewSet(viewsets.ModelViewSet):
     queryset = PrediccionVehiculo.objects.all().order_by('-created_at')
@@ -36,7 +45,6 @@ class UserPredictionsListAPIView(APIView):
                 "idPublish": blog.id if blog else None
             })
         return Response(results, status=status.HTTP_200_OK)
-
 
 @api_view(['POST'])
 def predecir_y_guardar(request):
@@ -83,14 +91,6 @@ def predecir_y_guardar(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# predictions/views.py
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import permissions, status
-from predictions.models import PrediccionVehiculo
-from predictions.serializers import PrediccionVehiculoSerializer
-from django.db.models import Q
-
 class ListPrediccionesFilteredAPIView(APIView):
     """
     API para listar predicciones con filtros opcionales
@@ -134,12 +134,49 @@ class ListPrediccionesFilteredAPIView(APIView):
                 "brand": pred.brand.name if pred.brand else "",
                 "model": pred.model.name if pred.model else "",
                 "version": pred.version.name if pred.version else "",
-                "kilometraje": pred.mileage,
-                "combustible": pred.fuel_type.name if pred.fuel_type else "",
-                "tipo_combustible": pred.fuel_type.name if pred.fuel_type else "",
-                "precio": pred.valued_amount,
-                "imagen_delantera": request.build_absolute_uri(pred.front_image.url) if pred.front_image else None,
+                "mileage": pred.mileage,
+                "fuel_type": pred.fuel_type.name if pred.fuel_type else "",
+                "transmission_type": pred.transmission_type.name if pred.transmission_type else "",
+                "valued_amount": pred.valued_amount,
+                "front_image": request.build_absolute_uri(pred.front_image.url) if pred.front_image else None,
             }
             for pred in qs.order_by("-created_at")
         ]
         return Response(data, status=status.HTTP_200_OK)
+
+class PredictionFiltersAPIView(APIView):
+    """
+    API que devuelve los datos necesarios para filtros de predicciones.
+    """
+
+    def get(self, request):
+        # Precios
+        prices = PrediccionVehiculo.objects.aggregate(
+            min_price=models.Min("valued_amount"),
+            max_price=models.Max("valued_amount")
+        )
+        # Kilometraje
+        mileage = PrediccionVehiculo.objects.aggregate(
+            min_mileage=models.Min("mileage"),
+            max_mileage=models.Max("mileage")
+        )
+        # Año de fabricación
+        years = PrediccionVehiculo.objects.aggregate(
+            min_year=models.Min("year_of_manufacture"),
+            max_year=models.Max("year_of_manufacture")
+        )
+        # Listados
+        brands = MarcaVehiculo.objects.values("id", "name")
+        colors = ColorVehiculo.objects.values("id", "name")
+        fuels = TipoCombustible.objects.values("id", "name")
+        transmissions = TipoTransmision.objects.values("id", "name")
+
+        return Response({
+            "brand": list(brands),
+            "amount_price": [prices["min_price"], prices["max_price"]],
+            "mileage": [mileage["min_mileage"], mileage["max_mileage"]],
+            "year_vehicle": [years["min_year"], years["max_year"]],
+            "fuel_type": list(fuels),
+            "transmission_type": list(transmissions),
+            "color": list(colors)
+        })

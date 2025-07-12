@@ -53,7 +53,8 @@ class LoginAPIView(APIView):
                 "last_name": user.last_name,
                 "is_staff": user.is_staff,
                 "phone": user.phone,
-                "date_joined": user.date_joined
+                "date_joined": user.date_joined,
+                "permitir_notifications": user.permitir_notifications
             }
         })
 

@@ -1,8 +1,15 @@
 from django.contrib import admin
 from .models import PrediccionVehiculo
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
+
+class PrediccionVehiculoResource(resources.ModelResource):
+    class Meta:
+        model = PrediccionVehiculo
 
 @admin.register(PrediccionVehiculo)
-class PrediccionVehiculoAdmin(admin.ModelAdmin):
+class PrediccionVehiculoAdmin(ImportExportModelAdmin):
+    resource_class = PrediccionVehiculoResource
     list_display = (
         'id',
         'model',

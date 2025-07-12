@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+</head>
+<body style="margin:0; padding:0; background-color:#f7f7f7;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#f7f7f7; padding:20px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="background-color:#ffffff; border-radius:8px; overflow:hidden;">
+          <tr>
+            <td style="padding:20px; text-align:center; background-color:#00447b;">
+              <h2 style="color:#ffffff; margin:0; font-family:Arial,sans-serif;">Solicitud de crédito recibida</h2>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px; font-family:Arial,sans-serif; color:#333333; font-size:14px;">
+              <p style="margin:0 0 15px 0;">Hola {{ user.first_name }},</p>
+              <p style="margin:0 0 15px 0;">
+                Hemos recibido tu solicitud de evaluación de crédito con los siguientes datos:
+              </p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:15px 0;">
+                <tr>
+                  <td style="padding:8px 0; border-bottom:1px solid #eeeeee;"><strong>Monto solicitado:</strong></td>
+                  <td style="padding:8px 0; border-bottom:1px solid #eeeeee;">${{ amount }}</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px 0; border-bottom:1px solid #eeeeee;"><strong>Plazo:</strong></td>
+                  <td style="padding:8px 0; border-bottom:1px solid #eeeeee;">{{ term }} meses</td>
+                </tr>
+              </table>
+              <p style="margin:0 0 15px 0;">
+                Un asesor se pondrá en contacto contigo muy pronto.
+              </p>
+              <p style="margin:0;">
+                Si tienes alguna consulta, puedes responder a este correo.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:15px; background-color:#f0f0f0; text-align:center; font-family:Arial,sans-serif; color:#888888; font-size:12px;">
+              © 2025 RM Autos. Todos los derechos reservados.
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
