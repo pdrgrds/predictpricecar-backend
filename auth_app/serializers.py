@@ -15,3 +15,18 @@ class ChangePasswordSerializer(serializers.Serializer):
         if data["newPassword"] != data["confirmNewPassword"]:
             raise serializers.ValidationError("La nueva contraseña y la confirmación no coinciden.")
         return data
+
+class CustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = [
+            "id",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "phone",
+            "is_active",
+            "is_staff",
+            "date_joined"
+        ]

@@ -4,14 +4,39 @@ from .serializers import PrediccionVehiculoSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 from .predictor import predecir_precio
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.views import APIView
+from blog.models import BlogPost
 
 class PrediccionVehiculoViewSet(viewsets.ModelViewSet):
     queryset = PrediccionVehiculo.objects.all().order_by('-created_at')
     serializer_class = PrediccionVehiculoSerializer
 
-from rest_framework.parsers import MultiPartParser, FormParser
+class UserPredictionsListAPIView(APIView):
+    """
+    Lista todas las predicciones del usuario autenticado
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        predictions = PrediccionVehiculo.objects.filter(user=request.user).order_by("-created_at")
+        results = []
+        for pred in predictions:
+            # Buscar si hay un blog vinculado
+            blog = BlogPost.objects.filter(prediction=pred).first()
+            results.append({
+                "id": pred.id,
+                "brand": pred.brand.name if pred.brand else None,
+                "model": pred.model.name if pred.model else None,
+                "year_of_manufacture": pred.year_of_manufacture,
+                "valued_amount": pred.valued_amount,
+                "created_at": pred.created_at,
+                "idPublish": blog.id if blog else None
+            })
+        return Response(results, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def predecir_y_guardar(request):

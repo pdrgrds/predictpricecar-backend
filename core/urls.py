@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/predict/', include('predictions.urls')),
     path('api/catalogos/', include('catalogos.urls')),
     path("api/auth/", include("auth_app.urls")),
+    path("api/blog/", include("blog.urls")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
