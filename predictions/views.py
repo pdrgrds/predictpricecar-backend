@@ -83,3 +83,63 @@ def predecir_y_guardar(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+# predictions/views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import permissions, status
+from predictions.models import PrediccionVehiculo
+from predictions.serializers import PrediccionVehiculoSerializer
+from django.db.models import Q
+
+class ListPrediccionesFilteredAPIView(APIView):
+    """
+    API para listar predicciones con filtros opcionales
+    """
+
+    def get(self, request):
+        qs = PrediccionVehiculo.objects.all().select_related(
+            "brand", "model", "version", "fuel_type", "transmission_type", "color"
+        )
+
+        # Filtros
+        marca = request.query_params.get("marca")
+        precio_min = request.query_params.getlist("precio")[0] if "precio" in request.query_params else None
+        precio_max = request.query_params.getlist("precio")[1] if "precio" in request.query_params else None
+        km_min = request.query_params.getlist("kilometraje")[0] if "kilometraje" in request.query_params else None
+        km_max = request.query_params.getlist("kilometraje")[1] if "kilometraje" in request.query_params else None
+        anio_min = request.query_params.getlist("anio")[0] if "anio" in request.query_params else None
+        anio_max = request.query_params.getlist("anio")[1] if "anio" in request.query_params else None
+        combustible = request.query_params.getlist("combustible")
+        transmision = request.query_params.getlist("transmision")
+        color = request.query_params.get("color")
+
+        if marca:
+            qs = qs.filter(brand_id=marca)
+        if precio_min and precio_max:
+            qs = qs.filter(valued_amount__gte=precio_min, valued_amount__lte=precio_max)
+        if km_min and km_max:
+            qs = qs.filter(mileage__gte=km_min, mileage__lte=km_max)
+        if anio_min and anio_max:
+            qs = qs.filter(year_of_manufacture__gte=anio_min, year_of_manufacture__lte=anio_max)
+        if combustible:
+            qs = qs.filter(fuel_type_id__in=combustible)
+        if transmision:
+            qs = qs.filter(transmission_type_id__in=transmision)
+        if color:
+            qs = qs.filter(color_id=color)
+
+        data = [
+            {
+                "id": pred.id,
+                "brand": pred.brand.name if pred.brand else "",
+                "model": pred.model.name if pred.model else "",
+                "version": pred.version.name if pred.version else "",
+                "kilometraje": pred.mileage,
+                "combustible": pred.fuel_type.name if pred.fuel_type else "",
+                "tipo_combustible": pred.fuel_type.name if pred.fuel_type else "",
+                "precio": pred.valued_amount,
+                "imagen_delantera": request.build_absolute_uri(pred.front_image.url) if pred.front_image else None,
+            }
+            for pred in qs.order_by("-created_at")
+        ]
+        return Response(data, status=status.HTTP_200_OK)
